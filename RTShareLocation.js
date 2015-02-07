@@ -22,6 +22,7 @@ function initialise() {
 	}
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 }
+initialise();
 // Now you can get the parameters you want like so:
 var serverid = params.serverid;
 if(serverid == undefined){
