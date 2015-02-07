@@ -128,16 +128,23 @@ function positionError(err) {
 function positionSuccess(position) {
 	if( type == "client" ){ //if Client, send data to server
 		document.getElementById('info').innerHTML = "Sending location!";
-		data = {
-		type:"geo",
-		pos:position
+		var coords = position.coords || position.coordinate || position;
+		position = {
+			type:"geo",
+			pos:{
+				latitude:coords.latitude,
+				longitude:coords.longitude
+			}
 		}
-	 	conn.send(data);
+	 	conn.send(position);
 	}
 	
 	// Centre the map on the new location
-	var coords = position.coords || position.coordinate || position;
-	var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
+	//var coords = position.coords || position.coordinate || position;
+	//var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
+
+
+	var latLng = new google.maps.LatLng(position.latitude, position.longitude);
 
 	map.setCenter(latLng);
 	map.setZoom(12);
@@ -148,7 +155,7 @@ function positionSuccess(position) {
 		title: 'Why, there you are!'
 	});
 
-	document.getElementById('info').innerHTML = 'Looking for <b>' + coords.latitude + ', ' + coords.longitude + '</b>...';
+	document.getElementById('info').innerHTML = 'Looking for <b>' + position.latitude + ', ' + position.longitude + '</b>...';
 
 	// And reverse geocode.
 	(new google.maps.Geocoder()).geocode({latLng: latLng}, function(resp) {
