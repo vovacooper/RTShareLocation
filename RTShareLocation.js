@@ -9,15 +9,6 @@ if (location.search) {
         params[nv[0]] = nv[1] || true;
     }
 }
-// Now you can get the parameters you want like so:
-var serverid = params.serverid;
-if(serverid == undefined){
-    console.log("serverid is undefined, assumin server");
-    Server();
-}else{
-    console.log("serverid="+ serverid + ", assuming Client");
-    Client();
-}
 
 var map;
 function initialise() {
@@ -31,6 +22,17 @@ function initialise() {
 	}
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 }
+// Now you can get the parameters you want like so:
+var serverid = params.serverid;
+if(serverid == undefined){
+    console.log("serverid is undefined, assumin server");
+    Server();
+}else{
+    console.log("serverid="+ serverid + ", assuming Client");
+    Client();
+}
+
+
 
 function Server(){
 	type = "server";
