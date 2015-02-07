@@ -130,13 +130,14 @@ function positionSuccess(position) {
 		document.getElementById('info').innerHTML = "Sending location!";
 		var coords = position.coords || position.coordinate || position;
 		position = {
-			type:"geo",
-			pos:{
 				latitude:coords.latitude,
 				longitude:coords.longitude
-			}
-		}
-	 	conn.send(position);
+			};
+		data = {
+			type:"geo",
+			pos:position
+		};
+	 	conn.send(data);
 	}
 	
 	// Centre the map on the new location
