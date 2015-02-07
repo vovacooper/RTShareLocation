@@ -10,6 +10,7 @@ if (location.search) {
     }
 }
 
+var conn;
 var map;
 function initialise() {
 	document.getElementById('info').innerHTML = "Initializing...";
@@ -68,7 +69,7 @@ function Client(){
 	document.title = "Client";
     var peer = new Peer({key: 'pyvnsf5mod23mcxr'}); 
 
-    var conn = peer.connect(serverid);
+    conn = peer.connect(serverid);
     conn.on('open', function(id){
     	document.getElementById('info').innerHTML = "Connected to server!";
         console.log('My peer ID is: ' + id);
