@@ -1,4 +1,5 @@
 var params = {};
+var type = "server";
 if (location.search) {
     var parts = location.search.substring(1).split('&');
 
@@ -20,6 +21,7 @@ if(serverid == undefined){
 
 var map;
 function initialise() {
+	document.getElementById('info').innerHTML = "Initializing...";
 	var latlng = new google.maps.LatLng(-25.363882,131.044922);
 	var myOptions = {
 		zoom: 4,
@@ -31,6 +33,8 @@ function initialise() {
 }
 
 function Server(){
+	type = "server";
+	document.getElementById('info').innerHTML = "Hi i'm a server!";
 	//Network
 	document.title = "Server";
     serverid = "PS" + Math.floor((Math.random() * 10000000000000) + 1);
@@ -40,12 +44,14 @@ function Server(){
     img.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + document.URL + "?serverid="+ serverid;
     
     var peer = new Peer(serverid, {key: 'pyvnsf5mod23mcxr'}); 
+
+    document.getElementById('info').innerHTML = "waiting to receive location from clients...";
     //Debug
     peer.on('connection', function(conn) {
         conn.on('data', function(data){
             if(data.type == "geo"){
                 //document.getElementById('info').innerHTML = "mouse: " + data.x + "," + data.y;
-                positionSuccess(data)
+                positionSuccess(data.pos);
                 document.getElementById('info').innerHTML = "Got new location from user!";
             }  
             //console.log(data);
@@ -55,6 +61,7 @@ function Server(){
 }
 
 function Client(){
+	type = "client";
 	document.title = "Client";
     var peer = new Peer({key: 'pyvnsf5mod23mcxr'}); 
 
@@ -76,9 +83,9 @@ function Client(){
 
 	//Render map and send to server
     window.setInterval(function () {
+    	document.getElementById('info').innerHTML = "Setting location...";
     	doGeolocation();
-    	document.getElementById('info').innerHTML = "Sending location!";
-    }, 60000);
+    }, 1000);
 }
 
 
@@ -115,6 +122,15 @@ function positionError(err) {
 }
 
 function positionSuccess(position) {
+	if( type == "client" ){ //if Client, send data to server
+		document.getElementById('info').innerHTML = "Sending location!";
+		data = {
+		type:"geo",
+		pos:position
+		}
+	 	conn.send(data);
+	}
+	
 	// Centre the map on the new location
 	var coords = position.coords || position.coordinate || position;
 	var latLng = new google.maps.LatLng(coords.latitude, coords.longitude);
