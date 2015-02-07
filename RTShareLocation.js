@@ -1,3 +1,23 @@
+var params = {};
+if (location.search) {
+    var parts = location.search.substring(1).split('&');
+
+    for (var i = 0; i < parts.length; i++) {
+        var nv = parts[i].split('=');
+        if (!nv[0]) continue;
+        params[nv[0]] = nv[1] || true;
+    }
+}
+// Now you can get the parameters you want like so:
+var serverid = params.serverid;
+if(serverid == undefined){
+    console.log("serverid is undefined, assumin server");
+    Server();
+}else{
+    console.log("serverid="+ serverid + ", assuming Client");
+    Client();
+}
+
 var map;
 function initialise() {
 	var latlng = new google.maps.LatLng(-25.363882,131.044922);
@@ -8,10 +28,62 @@ function initialise() {
 		disableDefaultUI: true
 	}
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	
-	prepareGeolocation();
-	doGeolocation();
 }
+
+function Server(){
+	//Network
+	document.title = "Server";
+    serverid = "PS" + Math.floor((Math.random() * 10000000000000) + 1);
+    console.log(serverid);
+
+    var img = document.getElementById("gameQRCode");
+    img.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + document.URL + "?serverid="+ serverid;
+    
+    var peer = new Peer(serverid, {key: 'pyvnsf5mod23mcxr'}); 
+    //Debug
+    peer.on('connection', function(conn) {
+        conn.on('data', function(data){
+            if(data.type == "geo"){
+                //document.getElementById('info').innerHTML = "mouse: " + data.x + "," + data.y;
+                positionSuccess(data)
+                document.getElementById('info').innerHTML = "Got new location from user!";
+            }  
+            //console.log(data);
+        });
+    });
+    //Map
+}
+
+function Client(){
+	document.title = "Client";
+    var peer = new Peer({key: 'pyvnsf5mod23mcxr'}); 
+
+    var conn = peer.connect(serverid);
+    conn.on('open', function(id){
+    	document.getElementById('info').innerHTML = "Connected to server!";
+        console.log('My peer ID is: ' + id);
+    });
+
+    //Not in use
+    peer.on('connection', function(conn) {
+        conn.on('data', function(data){
+            console.log(data);
+        });
+    });
+
+    //Initi Geolocation once
+	prepareGeolocation();
+
+	//Render map and send to server
+    window.setInterval(function () {
+    	doGeolocation();
+    	document.getElementById('info').innerHTML = "Sending location!";
+    }, 60000);
+}
+
+
+
+
 
 function doGeolocation() {
 	if (navigator.geolocation) {

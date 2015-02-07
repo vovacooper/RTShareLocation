@@ -7,17 +7,23 @@
 
 	<title>Location Server</title>
 
+	<script src="http://cdn.peerjs.com/0.3/peer.js"></script>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 	
 	<!-- Local -->
-	<script type="text/javascript" src="geometa.js"></script>
+	
 	<link rel="stylesheet" type="text/css" href="RTShareLocation.css">
-	<script type="text/javascript" src="RTShareLocation.js"></script>
+	
 </head>
 
 <body onload="initialise()">
+	<img id="gameQRCode" src="">
 	<div id="map_canvas"></div>
 	<div id="info" class="lightbox">Detecting your location...</div>
+
+
+	<script type="text/javascript" src="geometa.js"></script>
+	<script type="text/javascript" src="RTShareLocation.js"></script>
 </body>
 
 </html>
